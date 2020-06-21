@@ -6,7 +6,8 @@ const {
     SUCCESS_CODE, 
     SUCCESS_NO_CONTENT,
     CREATED_CODE,
-    NOT_FOUND
+    NOT_FOUND,
+    SUCCESS_STATUS
     } = require('../../util/Constants');
 const {BASE_URL} = require('../../config');
 module.exports = function setupCustomerServices(dbInstance){
@@ -15,9 +16,11 @@ module.exports = function setupCustomerServices(dbInstance){
     async function getAll(query = null){
         let trainers;
         if(query) {
-            trainers = await dbInstance.query(`select * from entrenadores where nombre like %${query}% or apellido_paterno like %${query}%`)
+            trainers = await dbInstance.query(`select id_colaborador, nombre, apellido_paterno, email, telefono,direccion 
+                                    from colaboradores where nombre like %${query}% or apellido_paterno like %${query}%`)
         } else {
-            trainers = await dbInstance.query('select * from entrenadores');
+            trainers = await dbInstance.query(`select id_colaborador, nombre, apellido_paterno, email, telefono,direccion 
+                                    from colaboradores where categoria like "%entrenador%" or categoria like "%ENTRE%"`);
             baseService.getServiceResponse(SUCCESS_STATUS,SUCCESS_CODE
                                      , "trainers", trainers)   
         }
@@ -25,33 +28,35 @@ module.exports = function setupCustomerServices(dbInstance){
     }
     async function create(trainer) {
         const errors = []
-        validators.createUser(trainer, errors);
+        //validators.createUser(trainer, errors);
         if(errors.length > 0) {
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
-                         "Validation fields failed,see error description for more details ", {error: errors})
+                         "Validation fields failed,see error description for more details ", errors)
         } else {
-            const existentDocument = await dbInstance.query('select documentoId from clientes where documentoId = ?', [customer.documentoId])
-            const existentEmail = await dbInstance.query('SELECT email FROM clientes where email = ?', [customer.email]);
+            const existentDocument = await dbInstance.query('select documento from colaboradores where documento = ?', [trainer.documento])
+            const existentEmail = await dbInstance.query('SELECT email FROM colaboradores where email = ?', [trainer.email]);
             if(existentDocument.length > 0) {
+                errors.push('Duplicated Document Id, please add a diferent document id')
                 baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
-                         'Duplicated field id , see errors for more details', {error: 'Duplicated Document Id, please add a diferent document id'});
+                         'Duplicated field id , see errors for more details', errors);
             } else if(existentEmail.length > 0) {    
+                errors.push('Duplicated Email Id , please add a diferent email')
                 baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
-                        'Duplicated field id , see errors for more details', {error: 'Duplicated Email Id , please add a diferent email'});
+                        'Duplicated field id , see errors for more details', errors);
            } else {
-                const newCustomer = await dbInstance.query('insert into clientes set ?',[customer]);
+                const newTrainer = await dbInstance.query('insert into colaboradores set ?',[trainer]);
                 baseService.getServiceResponse(SUCCESS_STATUS, CREATED_CODE,
-                             "User created", {userId: newCustomer.insertId,
-                                              ref: `${BASE_URL}/customer/${newCustomer.insertId}/info` });
+                             "Trainer created", {userId: newTrainer.insertId,
+                                              ref: `${BASE_URL}/trainer/${newTrainer.insertId}/info` });
             }
         }
         return baseService.returnData;
     }
 
     const get = async (id) => {
-        const trainer = await dbInstance.query('select * from entrenadores where id = ?', [id])
-        if(customer.length == 0){
-            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,"Trainer not found", {});
+        const trainer = await dbInstance.query('select * from colaboradores where id_colaborador = ?', [id])
+        if(trainer.length == 0){
+            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,"Trainer not found",  "Trainer not found");
         } else {
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetched trainer data", trainer[0]);
         }
@@ -59,24 +64,25 @@ module.exports = function setupCustomerServices(dbInstance){
     }
     
     //TODO: Improve validator
-    const update = async (id, newCustomer) => {
+    const update = async (id, newTrainer) => {
         const errors = [];
-        const customer = await dbInstance.query('select * from clientes where id = ?', [id])
-        if(customer.length == 0){
-            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,"Customer not found", {});
+        const trainer = await dbInstance.query('select * from colaboradores where id_colaborador = ?', [id])
+        if(trainer.length == 0){
+            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,"Trainer not found", "Trainer not found");
         } else {
-            const documentExist = await dbInstance.query('select id,documentoId from clientes where documentoId = ?', [newcustomer.documentoId])
-            if(documentExist.length > 0 && documentExist[0] !== id) {
+            const documentExist = await dbInstance.query('select id_colaborador,documento from colaboradores where documento = ?', [newTrainer.documento])
+            if(documentExist.length > 0 && documentExist[0].id_colaborador !== id) {
+                errors.push('Document field must be unique, please add a diferent document id');
                 baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
-                         'Document field must be unique', {error: 'Document field must be unique, please add a diferent document id'});
+                         'Document field must be unique', errors);
             } else {
-                validators.modify(customer, errors);
+                //validators.modify(customer, errors);
                 if(errors.length > 0) {
                  baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
-                         "Validation fields failed,see error description for more details ", {error: errors})
+                         "Validation fields failed,see error description for more details ",errors)
                 } else {
-                    let modifiedCustomer = await dbInstance.query('update clientes set ? where id=?', [newCustomer, id])
-                    baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "modified succesfully", modifiedCustomer)
+                    let modifiedTrainer = await dbInstance.query('update colaboradores set ? where id_colaborador=?', [newTrainer, id])
+                    baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "modified succesfully", modifiedTrainer)
                 }
             }
         }
@@ -84,11 +90,11 @@ module.exports = function setupCustomerServices(dbInstance){
     }
 
     const deleteTrainer = async (id) => {
-        const trainerToDelete = await dbInstance.query('select * from entrenadores where id = ?', [id]);
+        const trainerToDelete = await dbInstance.query('select * from colaboradores where id_colaborador = ?', [id]);
         if(trainerToDelete.length == 0) {
-            baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", {});
+            baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", "Trainer not found");
         } else {
-            await dbInstance.query('delete from entrenadores where id = ?', [id]);
+            await dbInstance.query('delete from colaboradores where id_colaborador = ?', [id]);
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_NO_CONTENT, "Trainer deleted successfully", true);
         }
         return baseService.returnData;
@@ -97,13 +103,35 @@ module.exports = function setupCustomerServices(dbInstance){
     const registerActivity = async (trainerId,activityId) =>{
         const trainer = await dbInstance.query('select categoria from colaboradores where id_colaborador = ?', [trainerId]);
         if(trainer.length == 0) {
-            baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", {});
+            baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", "Trainer not found");
+        } else if(trainer[0].categoria.toLowerCase() !== "entrenador") {
+            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "Not a trainer", "Not a trainer");
         } else {
-            if(trainer.categoria.toLowerCase() !== "entrenador") {
-                baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "Not a trainer", {});
+            const registeredActivity = await dbInstance.query('select id_actividad from actividades_entrenador where id_entrenador = ? and id_actividad = ?', [trainerId, activityId]);
+            if( registeredActivity.length > 0 && registeredActivity[0].id_actividad == activityId){
+                baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "Duplicated Register", "Activity already registered to trainer");
             } else {
                 const trainerActivity = await dbInstance.query('insert into actividades_entrenador set id_entrenador = ? , id_actividad = ?', [trainerId, activityId])
                 baseService.getServiceResponse(SUCCESS_STATUS, CREATED_CODE, "Activity added to trainer", {id: trainerActivity.insertId});
+            }
+        }
+        return baseService.returnData;
+    }
+
+    const getActivities = async (trainerId) => {
+        const trainer = await dbInstance.query(`select categoria from colaboradores where id_colaborador = ?`, [trainerId]);
+        if(trainer.length == 0) {
+            baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found","Trainer not found");
+        } else {
+            if(trainer[0].categoria.toLowerCase() !== "entrenador") {
+                baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "Not a trainer", "Not a trainer");
+            } else {
+                const trainerActivities = await dbInstance.query(`select  a.id_actividad, a.nombre, a.descripcion 
+                                                from actividades_entrenador ae
+                                                left join actividades a on a.id_actividad = ae.id_actividad
+                                                inner join colaboradores c on  c.id_colaborador = ae.id_entrenador
+                                                where c.id_colaborador = ?`,[trainerId])                               
+                baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetching trainer activities", trainerActivities);
             }
         }
         return baseService.returnData;
@@ -112,24 +140,34 @@ module.exports = function setupCustomerServices(dbInstance){
     const getScheduledActivities = async (trainerId, time = "future") => {
         const trainer = await dbInstance.query('select categoria from colaboradores where id_colaborador = ?', [trainerId]);
         if(trainer.length == 0) {
-            baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", {});
-        } else if(trainer.categoria.toLowerCase() !== "entrenador"){
-            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "Not a trainer", {});
+            baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", "Trainer not found");
+        } else if(trainer[0].categoria.toLowerCase() !== "entrenador"){
+            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "Not a trainer", "Not a trainer");
         } else {
-            const actualDate = new Date();
+            let actualDate = new Date().toISOString()
+            actualDate = actualDate.substring(0, actualDate.indexOf('T'));
             let sActivities;
             switch(time) {
-                case "total":  sActivities = await dbInstance.query(`select * from detalle_actividad d
+                case "total":  sActivities = await dbInstance.query(`select d.fechal, d.capacidad, bh.hora_inicio, bh.hora_fin, a.nombre 
+                                                            from detalle_actividad d
                                                             inner join actividades_entrenador e on e.id_act_entrenador = d.id_actividad_ent 
+                                                            inner join actividades a on a.id_actividad = e.id_actividad
+                                                            inner join bloque_horario bh on bh.id_bloque_horario = d.id_bloque_horario
                                                             where e.id_entrenador = ? `, [trainerId]);
                                 break;
-                case "past":    sActivities = await dbInstance.query(`select * from detalle_actividad d
+                case "past":    sActivities = await dbInstance.query(`select d.fechal, d.capacidad, bh.hora_inicio, bh.hora_fin, a.nombre 
+                                                            from detalle_actividad d
                                                             inner join actividades_entrenador e on e.id_act_entrenador = d.id_actividad_ent 
-                                                            where e.id_entrenador = ? and d.fecha <= ${actualDate}`, [trainerId]);
+                                                            inner join actividades a on a.id_actividad = e.id_actividad
+                                                            inner join bloque_horario bh on bh.id_bloque_horario = d.id_bloque_horario 
+                                                            where e.id_entrenador = ? and d.fechal <= ${actualDate}`, [trainerId]);
                                 break;     
-                default:        sActivities = await dbInstance.query(`select * from detalle_actividad d
+                default:        sActivities = await dbInstance.query(`select d.fechal, d.capacidad, bh.hora_inicio, bh.hora_fin, a.nombre 
+                                                            from detalle_actividad d
                                                             inner join actividades_entrenador e on e.id_act_entrenador = d.id_actividad_ent 
-                                                            where e.id_entrenador = ? and d.fecha >= ${actualDate}`, [trainerId]);
+                                                            inner join actividades a on a.id_actividad = e.id_actividad
+                                                            inner join bloque_horario bh on bh.id_bloque_horario = d.id_bloque_horario
+                                                            where e.id_entrenador = ? and d.fechal >= ${actualDate}`, [trainerId]);
                                 break;                      
             }
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetching future activities", sActivities)
@@ -145,6 +183,7 @@ module.exports = function setupCustomerServices(dbInstance){
         create,
         deleteTrainer,
         registerActivity,
-        getScheduledActivities
+        getScheduledActivities,
+        getActivities
     }
 }

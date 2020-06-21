@@ -24,8 +24,9 @@ const add = async (req, res) => {
     try{
         const newCustomer = {
             ...req.body,
-            idSede : 1,
-            estadoId: 1
+            fecha_alta : new Date(),
+            sede_id : 1,
+            
         }
         const addCustomer = await dbServices.customerServices.create(newCustomer);
         responseCode = addCustomer.responseCode;
@@ -35,6 +36,8 @@ const add = async (req, res) => {
             responseData = baseController.getSucessResponse(addCustomer.status, addCustomer.message, addCustomer.data);
         }
     } catch(error) {
+        console.log(error);
+        
         responseCode = INTERNAL_SERVER_ERROR_CODE;
         responseData = baseController.getErrorResponse(error.message); 
     }

@@ -24,7 +24,7 @@ app.set('port', port);
 // Setting the routes
 app.use('/api/', require('./api/controllers/'));
 app.use(NotFoundMiddleware);
-app.use(ErrorMiddleware);
+app.use(ErrorMiddleware)
 // create the server
 const server = http.createServer(app)
 // starting the app

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>Lista Entrenadores</title>
+</head>
+
+<body class="fondo">
+    <!--Navbar-->
+    <div class="container-fluid" style="background-color: #0a0a0a;">
+        <nav class="navbar navbar-expand-md navbar-dark container" style="background-color: #0a0a0a;">
+            <a class="navbar-brand" href="index.jsp">
+                <img src="imggym/trainerlogo.JPG" width="550" height="125" class="d-inline-block align-top" alt="">
+            </a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mr-3">
+                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="actionClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Clientes
+                         </a>
+                        <div class="dropdown-menu" aria-labelledby="actionClientes">
+                            <a class="dropdown-item" href="./../clientes/listarClientes.html">Listar Clientes</a>
+                            <a class="dropdown-item" href="./../clientes/añadirCliente.html">Añadir Clientes</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="actionClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Entrenadores
+                         </a>
+                        <div class="dropdown-menu" aria-labelledby="actionClientes">
+                            <a class="dropdown-item" href="./../personal/listarTrainers.html">Listar Entrenadores</a>
+                            <a class="dropdown-item" href="./../personal/añadirPersonal.html">Añadir Entrenadores</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="actionClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Clases
+                         </a>
+                        <div class="dropdown-menu" aria-labelledby="actionClientes">
+                            <a class="dropdown-item" href="./../clases/añadirClase.html">Añadir Clase</a>
+                            <a class="dropdown-item" href="./../clases/listarClases.html">Listar Clases</a>
+                        </div>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link text-white" href="./../servicios/listarServicios.html">Entrenamientos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="./../informacion/contactenos.html">Contactenos</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>   
+    <div class="container-fluid">
+        <div>
+            <h3>Lista Entrenadores</h3>
+        </div>
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <td>CODIGO</td>
+                    <td>NOMBRE</td>
+                    <td>APELLIDO</td>
+                    <td>TELEFONO</td>
+                    <td>EMAIL</td>
+                    <td>DIRECCION</td>
+                    <td>Accion</td>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+    <!--Navbar-->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            $(document).ready(() => {
+                axios.get("http://localhost:5000/api/personal")
+                .then(res => {
+                    console.log(res.data.data);
+                    
+                    res.data.data.map(trainer => {
+                        const row = `<tr>
+                            <td>${trainer.id_colaborador}</td>
+                            <td>${trainer.nombre}</td>
+                            <td>${trainer.apellido_paterno}</td>
+                            <td>${trainer.telefono}</td>
+                            <td>${trainer.email}</td>
+                            <td>${trainer.direccion}</td>
+                            <td>
+                                <a href="#">info</a>
+                                <a href="#">editar</a>
+                                <a href="#">eliminar</a>
+                            </td>
+                            </tr>`
+                         document.getElementById("table-body").innerHTML += row;    
+                    })
+                })
+                .catch(error => {
+                    console.log(error);                    
+                })
+            })
+        </script>
+    </body>
+</html>

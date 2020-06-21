@@ -40,14 +40,14 @@ const del = async (req, res) => {
     let responseData;
     try{
         const {id} = req.params;
-        const deletedCustomer =await dbServices.customerServices.deleteCustomer(id);
+        const deletedCustomer = await dbServices.customerServices.deleteCustomer(id);
         responseCode = deletedCustomer.responseCode;
-        responseData = baseController.getSucessResponse(deletedCustomer.status, deletedCustomer.message, deletedCustomer.data)
+        responseData = baseController.getSucessResponse(deletedCustomer.status, deletedCustomer.message, deletedCustomer.data);
     }catch(error){
         responseCode = INTERNAL_SERVER_ERROR_CODE;
         responseData = baseController.getErrorResponse(error.message)
     }
-    return res.status(responseCode).json(responseData);
+    return res.status(responseCode).send(responseData);
 }
 
 module.exports = {

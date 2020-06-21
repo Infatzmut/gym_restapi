@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../css/servicios.css">
+</head>
+<body>
+    <div class="container-fluid" style="background-color: #0a0a0a;">
+        <nav class="navbar navbar-expand-md navbar-dark container" style="background-color: #0a0a0a;">
+            <a class="navbar-brand" href="index.jsp">
+                <img src="imggym/trainerlogo.JPG" width="550" height="125" class="d-inline-block align-top" alt="">
+            </a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mr-3">
+                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="actionClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Clientes
+                         </a>
+                        <div class="dropdown-menu" aria-labelledby="actionClientes">
+                            <a class="dropdown-item" href="./../clientes/listarClientes.html">Listar Clientes</a>
+                            <a class="dropdown-item" href="./../clientes/añadirCliente.html">Añadir Clientes</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="actionClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Entrenadores
+                         </a>
+                        <div class="dropdown-menu" aria-labelledby="actionClientes">
+                            <a class="dropdown-item" href="./../personal/listarTrainers.html">Listar Entrenadores</a>
+                            <a class="dropdown-item" href="./../personal/añadirPersonal.html">Añadir Entrenadores</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="actionClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Clases
+                         </a>
+                        <div class="dropdown-menu" aria-labelledby="actionClientes">
+                            <a class="dropdown-item" href="./../clases/añadirClase.html">Añadir Clase</a>
+                            <a class="dropdown-item" href="./../clases/listarClases.html">Listar Clases</a>
+                        </div>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link text-white" href="./../servicios/listarServicios.html">Entrenamientos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="./../informacion/contactenos.html">Contactenos</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>   
+    <section>
+        <div class="header-section header-section_padding-top-bottom text-center">
+            <h1 class="header-section__title header-section__title_sm">Lista de Entrenamientos</h1>
+        </div>
+        <div class="columns columns_multiline columns_no-gutter">
+            <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                <a class="border-box" href="./cycling.html">
+                    <figure class="border-box__img-container lazy-container-image ">
+                        <img class="border-box__img" src="../../img/cycling.jpg" alt="" data-object-fit="cover">
+                    </figure>
+                    <div class="border-box__info-container">
+                        <h4 class="border-box__title">Indoor Cycling</h4>
+                    
+                        <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">Servicio incluido en el plan</h5>
+                    
+                    </div>
+                </a>
+            </div>
+        
+            <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                <a class="border-box" href="#">
+                    <figure class="border-box__img-container lazy-container-image lazyload-loading ">
+                        <img class=" border-box__img" src="../../img/cardio.jpg" alt="" data-object-fit="cover">
+                    </figure>
+                    <div class="border-box__info-container">
+                        <h4 class="border-box__title">Zona Cardiovascular</h4>
+                        <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">Servicio incluido en el plan</h5>
+                    </div>
+                </a>
+            </div>
+        
+            <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                <a class="border-box" href="./boxeo.html">
+                    <figure class="border-box__img-container lazy-container-image lazyload-loading ">
+                        <img class=" border-box__img" src="../../img/boxeo.jpg" alt="" data-object-fit="cover">
+                    </figure>
+                    <div class="border-box__info-container">
+                        <h4 class="border-box__title">Zona de Boxeo</h4>
+                    
+                        <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">Servicio incluido en el plan</h5>
+                    
+                    </div>
+                </a>
+            </div>
+        
+            <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                <a class="border-box" href="./yoga.html">
+                    <figure class="border-box__img-container lazy-container-image lazyload-loading ">
+                        <img class=" border-box__img" src="../../img/yoga.jpg" alt="" data-object-fit="cover">
+                    </figure>
+                    <div class="border-box__info-container">
+                        <h4 class="border-box__title">Yoga</h4>
+                    
+                        <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">Servicio incluido en el plan</h5>
+                    
+                    </div>
+                </a>
+            </div>
+        
+            <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                <a class="border-box" href="./funcional.html">
+                    <figure class="border-box__img-container lazy-container-image lazyload-loading ">
+                        <img class=" border-box__img" src="../../img/funcional.jpg" alt="" data-object-fit="cover">
+                    </figure>
+                    <div class="border-box__info-container">
+                        <h4 class="border-box__title">Zona Funcional</h4>
+                    
+                        <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">Servicio incluido en el plan</h5>
+                    
+                    </div>
+                </a>
+            </div>
+        
+            <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                <a class="border-box" href="./fullbody.html">
+                    <figure class="border-box__img-container lazy-container-image lazyload-loading ">
+                        <img class=" border-box__img" src="../../img/fullbody.jpg" alt="" data-object-fit="cover">
+                    </figure>
+                    <div class="border-box__info-container">
+                        <h4 class="border-box__title">Fullbody</h4>
+                    
+                        <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">Servicio incluido en el plan</h5>
+                    
+                    </div>
+                </a>
+            </div>
+            <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                <a class="border-box" href="./personal_trainer.html">
+                    <figure class="border-box__img-container lazy-container-image lazyload-loading ">
+                        <img class=" border-box__img" src="../../img/personal-trainer.jpg" alt="" data-object-fit="cover">
+                    </figure>
+                    <div class="border-box__info-container">
+                        <h4 class="border-box__title">Entrenamiento Personalizado</h4>
+                    
+                        <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">Servicio complementario</h5>
+                    
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>

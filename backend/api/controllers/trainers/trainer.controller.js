@@ -62,7 +62,7 @@ const del = async (req, res) => {
     return res.status(responseCode).json(responseData);
 }
 
-const getActivities = async (req, res) => {
+const getScheduledActivities = async (req, res) => {
     let responseCode;
     let responseData;
     try{
@@ -76,22 +76,48 @@ const getActivities = async (req, res) => {
         }
         responseCode = activities.responseCode;
         if(activities.status.toLowerCase() == "error"){
-            responseData = baseController.getErrorResponse(activities.message)
+            responseData = baseController.getErrorResponse(activities.message, activities.data)
         } else {
             responseData = baseController.getSucessResponse(activities.status, activities.message, activities.data);
         }
     }catch(error){
         responseCode = INTERNAL_SERVER_ERROR_CODE;
-        responseData = error.message
+        responseData = baseController.getErrorResponse(error.message)
     }
     return res.status(responseCode).json(responseData);
 }
 
-const getScheduledActivities = async (req, res) => {
+const registerActivities = async (req, res) => {
+    let responseCode;
+    let responseData;
+    const {id_trainer, id_activity} = req.body;
+    try{
+        const registeredActivities = await dbServices.trainerServices.registerActivity(id_trainer, id_activity);
+        responseCode = registeredActivities.responseCode;
+        if(registeredActivities.status.toLowerCase() === 'error'){
+            responseData =  baseController.getErrorResponse(registeredActivities.message, registeredActivities.data);
+        } else {
+            responseData = baseController.getSucessResponse(registeredActivities.status, registeredActivities.message, registeredActivities.data)
+        }
+    }catch(error){
+        responseCode = INTERNAL_SERVER_ERROR_CODE;
+        responseData = baseController.getErrorResponse(error.message);
+    }
+    return res.status(responseCode).json(responseData);
+}
+
+const getActivities = async (req, res) => {
     let responseCode;
     let responseData;
     try{
-
+        const {id} = req.params;
+        const activities = await dbServices.trainerServices.getActivities(id);
+        responseCode = activities.responseCode;
+        if(activities.status.toLowerCase() === "error"){
+            responseData = baseController.getErrorResponse(activities.message);
+        } else {
+            responseData = baseController.getSucessResponse(activities.status, activities.message, activities.data);
+        }
     }catch(error){
         responseCode = INTERNAL_SERVER_ERROR_CODE;
         responseData = error.message
@@ -104,5 +130,6 @@ module.exports = {
     update,
     del,
     getActivities,
-    getScheduledActivities
+    getScheduledActivities,
+    registerActivities
 }
