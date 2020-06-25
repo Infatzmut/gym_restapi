@@ -63,7 +63,7 @@ module.exports = function setupActivitiesServices(dbInstance) {
         if(!activityid) {
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "No activity sended", {})
         } else {
-            const scheduledClases = await dbInstance.query(`select c.nombre, c.apellido_paterno, da.fechal, da.capacidad, bh.hora_inicio, bh.hora_fin ,a.nombre as titulo, a.descripcion
+            const scheduledClases = await dbInstance.query(`select da.id_detalle_actividad as id_clase, c.nombre, c.apellido_paterno, da.fechal, da.capacidad, bh.hora_inicio, bh.hora_fin ,a.nombre as titulo, a.descripcion
                                         from actividades a
                                         inner join actividades_entrenador ae on ae.id_actividad = a.id_actividad
                                         inner join detalle_actividad da on da.id_actividad_ent = ae.id_act_entrenador

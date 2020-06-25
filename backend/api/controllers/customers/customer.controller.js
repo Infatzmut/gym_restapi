@@ -50,8 +50,26 @@ const del = async (req, res) => {
     return res.status(responseCode).send(responseData);
 }
 
+const getClassPerClient = (req, res) => {
+    let responseCode;
+    let responseData;
+    try {
+        const {clientId} = req.params;
+        const clientClass = dbServices.classService.getClassesPerCustomer(clientId);
+        if(clientClass.status.toLowerCase() == "error") {
+            responseData = baseController.getErrorResponse(clientClass.message, clientClass.data);
+        } else {
+            responseData = baseController.getSucessResponse(clientClass.status, clientClass.message, clientClass.data);
+        }
+    }catch(error){
+        responseCode = INTERNAL_SERVER_ERROR_CODE;
+        responseData = baseController.getErrorResponse(error.message);
+    }
+    return res.status(responseCode).json(responseData);
+}
 module.exports = {
     get,
     update,
-    del
+    del,
+    getClassPerClient
 }

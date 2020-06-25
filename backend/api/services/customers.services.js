@@ -90,11 +90,21 @@ module.exports = function setupCustomerServices(dbInstance){
         return baseService.returnData;
     }
     
+    const getClassesPerCustomer = async (customerId) => {
+        if(!customerId) {
+            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "INVALID SEARCH PARAMETER", "NO CUSTOMER ID SENDED");
+        } else {
+            const classesPerCustomer = await dbInstance.query("select * from actividad_cliente where id_cliente = ?", [customerId]);
+            baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "FETCHING CUSTOMER CLASES", classesPerCustomer);
+        }
+        return baseService.returnData;
+    }
     return {
         getCustomers,
         getCustomer,
         update,
         create,
-        deleteCustomer
+        deleteCustomer,
+        getClassesPerCustomer
     }
 }

@@ -83,8 +83,6 @@
             $(document).ready(() => {
                 axios.get("http://localhost:5000/api/customers")
                 .then(res => {
-                    console.log(res.data.data);
-                    
                     res.data.data.map(customer => {
                         const fecha = customer.fecha_alta.substring(0,customer.fecha_alta.indexOf('T'));
                         const row = `<tr>
@@ -97,17 +95,21 @@
                             <td>${customer.membresia}</td>
                             <td>${customer.direccion}</td>
                             <td>
-                                <a href="#">info</a>
-                                <a href="#">editar</a>
-                                <a href="#">eliminar</a>
+                                <button onclick="info(${customer.id_cliente})">info</button>
+                                <button  >editar</button>
+                                <button >eliminar</button>
                             </td>
                             </tr>`
                          document.getElementById("table-body").innerHTML += row;    
+
+                         function info(customer) {
+                             console.log(customer);
+                         }
                     })
                 })
                 .catch(error => {
                     console.log(error);                    
-                })
+                });
             })
         </script>
 </body>
