@@ -1,0 +1,93 @@
+{
+    "swagger": "2,0",
+    "info":{
+        "description": "Backend ::GYM Restful API",
+        "version": "1.0.0",
+        "title": "Restful GYM API ", 
+        "contact": {
+            "email": "fabrizzio1996@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "ulr": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "localhost:5000",
+    "basePath": "/api",
+    "tags": [
+        {
+            "name": "Customers",
+            "description": "Everything about customers"
+        }
+    ],
+    "schemes": ["http"],
+    "paths": {
+        "/customer":{
+            "get": {
+                "tags": ["Customer"],
+                "sumary": "Find all the customers",
+                "description": "",
+                "produces": ["application/json"],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Succesful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/customers"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request status value"
+                    }
+                }
+            }
+        },
+        "/customer/{id}": {
+            "get": {
+                "tags": ["Customer"],
+                "sumary": "Find one customer",
+                "description": "",
+                "produces": ["application/json"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "type":"string",
+                    "description": "customer id",
+                    "required": true
+                }],
+                "responses": {
+                    "200":{
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/customers"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request value",
+                        "schema":{
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/bad_request"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not record found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/not_found"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

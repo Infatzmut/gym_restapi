@@ -59,7 +59,8 @@ module.exports = function setupActivitiesServices(dbInstance) {
     }
     
     const getScheduledClases = async (activityid) => {
-        const currentDate = new Date();
+        let currentDate = new Date().toISOString();
+        currentDate = currentDate.substring(0, currentDate.indexOf('T'));
         if(!activityid) {
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "No activity sended", {})
         } else {
@@ -69,7 +70,7 @@ module.exports = function setupActivitiesServices(dbInstance) {
                                         inner join detalle_actividad da on da.id_actividad_ent = ae.id_act_entrenador
                                         inner join colaboradores c on c.id_colaborador = ae.id_entrenador 
                                         inner join bloque_horario bh on da.id_bloque_horario = bh.id_bloque_horario
-                                        where a.id_actividad = ?`, [activityid])
+                                        where a.id_actividad = ? and fechal > ${currentDate}`, [activityid])
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetching scheduled clases", scheduledClases);
         }
         return baseService.returnData;                            

@@ -15,6 +15,7 @@ module.exports = function setupScheduleServices (dbInstance) {
                                                     left join  actividades_entrenador ae on ae.id_act_ent = d.id_act_entrenador
                                                     inner join actividades a on ae.id_actividad = a.id_actividad
                                                     inner join colaboradores c on c.id_colaborador = ae.id_entrenador
+                                                    where c.estado = 1
                                                     limit ${query}`);
         baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, `Fetching all events limited by ${query}`, events);
         return baseService.returnData                                            

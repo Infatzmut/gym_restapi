@@ -50,16 +50,17 @@ const del = async (req, res) => {
     return res.status(responseCode).send(responseData);
 }
 
-const getClassPerClient = (req, res) => {
+const getClassPerClient = async (req, res) => {
     let responseCode;
     let responseData;
     try {
-        const {clientId} = req.params;
-        const clientClass = dbServices.classService.getClassesPerCustomer(clientId);
-        if(clientClass.status.toLowerCase() == "error") {
-            responseData = baseController.getErrorResponse(clientClass.message, clientClass.data);
+        const {customerId} = req.params;
+        const customerClass = await dbServices.customerServices.getClassesPerCustomer(customerId);
+        responseCode = customerClass.responseCode;
+        if(customerClass.status.toLowerCase() == "error") {
+            responseData = baseController.getErrorResponse(customerClass.message, customerClass.data);
         } else {
-            responseData = baseController.getSucessResponse(clientClass.status, clientClass.message, clientClass.data);
+            responseData = baseController.getSucessResponse(customerClass.status, customerClass.message, customerClass.data);
         }
     }catch(error){
         responseCode = INTERNAL_SERVER_ERROR_CODE;

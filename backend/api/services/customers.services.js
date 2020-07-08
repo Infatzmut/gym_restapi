@@ -14,20 +14,20 @@ module.exports = function setupCustomerServices(dbInstance){
     const baseService = new setupBaseService();
 
     async function getCustomers(){
-        const customers = await dbInstance.query('select * from clientes');
+        const customers = await dbInstance.query('select * from clientes where estado = 1');
         baseService.getServiceResponse(SUCCESS_STATUS,SUCCESS_CODE
                                  , "customers", customers)
     return baseService.returnData;
     }
     async function create(customer) {
         const errors = []
-        //validators.createUser(customer, errors);
+        validators.createUser(customer, errors);
         if(errors.length > 0) {
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
                          "Validation fields failed,see error description for more details ", {error: errors})
         } else {
-            const existentDocument = await dbInstance.query('select documento from clientes where documento = ?', [customer.documentoId])
-            const existentEmail = await dbInstance.query('SELECT email FROM clientes where email = ?', [customer.email]);
+            const existentDocument = await dbInstance.query('select documento from clientes where documento = ? and estado = 1', [customer.documento])
+            const existentEmail = await dbInstance.query('SELECT email FROM clientes where email = ? and estado = 1', [customer.email]);
             if(existentDocument.length > 0) {
                 baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
                          'Duplicated field id , see errors for more details', {error: 'Duplicated Document Id, please add a diferent document id'});
@@ -38,14 +38,15 @@ module.exports = function setupCustomerServices(dbInstance){
                 const newCustomer = await dbInstance.query('insert into clientes set ?',[customer]);
                 baseService.getServiceResponse(SUCCESS_STATUS, CREATED_CODE,
                              "User created", {userId: newCustomer.insertId,
-                                              ref: `${BASE_URL}/customer/${newCustomer.insertId}/info` });
+                                              cliente: customer,  
+                                              ref: `${BASE_URL}/customer/${newCustomer.insertId}` });
             }
         }
         return baseService.returnData;
     }
 
     const getCustomer = async (id) => {
-        const customer = await dbInstance.query('select * from clientes where id_cliente = ?', [id])
+        const customer = await dbInstance.query('select * from clientes where id_cliente = ? and estado =1', [id])
         if(customer.length == 0){
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND,"Customer not found", {});
         } else {
@@ -56,11 +57,11 @@ module.exports = function setupCustomerServices(dbInstance){
     
     const update = async (id, newCustomer) => {
         const errors = [];
-        const customer = await dbInstance.query('select * from clientes where id_cliente = ?', [id])
+        const customer = await dbInstance.query('select * from clientes where id_cliente = ? and estado = 1', [id])
         if(customer.length == 0){
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND,"Customer not found", "Customer not found");
         } else {
-            const documentExist = await dbInstance.query('select id_cliente,documento from clientes where documento = ?', [newCustomer.documento])
+            const documentExist = await dbInstance.query('select id_cliente,documento from clientes where documento = ? and estado = 1', [newCustomer.documento])
             if(documentExist.length > 0 && documentExist[0].id_cliente !== id) {
                 errors.push('Document field must be unique, please add a diferent document id')
                 baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
@@ -80,7 +81,7 @@ module.exports = function setupCustomerServices(dbInstance){
     }
 
     const deleteCustomer = async (id) => {
-        const customer = await dbInstance.query('select nombre from clientes where id_cliente = ?', [id]);
+        const customer = await dbInstance.query('select nombre from clientes where id_cliente = ? and estado = 1', [id]);
         if(customer.length == 0) {
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "No existent customer", {});
         } else {
@@ -94,7 +95,14 @@ module.exports = function setupCustomerServices(dbInstance){
         if(!customerId) {
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "INVALID SEARCH PARAMETER", "NO CUSTOMER ID SENDED");
         } else {
-            const classesPerCustomer = await dbInstance.query("select * from actividad_cliente where id_cliente = ?", [customerId]);
+            const classesPerCustomer = await dbInstance.query(`select  bh.hora_inicio,bh.hora_fin, a.nombre as actividad, da.fechal. c.nombre, c.apellido_paterno 
+                                                                from actividad_cliente ac 
+                                                                inner join detalle_actividad da on ac.detalle_act = da.id_detalle_actividad
+                                                                inner join bloque_horario bh on bh.id_bloque_horario = da.id_bloque_horario
+                                                                inner join actividades_entrenador ae on ae.id_act_entrenador = da.id_actividad_ent
+                                                                inner join actividades a on a.id_actividad = ae.id_actividad
+                                                                inner join colaboradores c on c.id_colaborador = ae.id_entrenador 
+                                                                where id_cliente = ? `, [customerId]);
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "FETCHING CUSTOMER CLASES", classesPerCustomer);
         }
         return baseService.returnData;

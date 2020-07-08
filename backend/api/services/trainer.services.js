@@ -17,10 +17,10 @@ module.exports = function setupCustomerServices(dbInstance){
         let trainers;
         if(query) {
             trainers = await dbInstance.query(`select id_colaborador, nombre, apellido_paterno, email, telefono,direccion 
-                                    from colaboradores where nombre like %${query}% or apellido_paterno like %${query}%`)
+                                    from colaboradores where nombre like %${query}% or apellido_paterno like %${query}% and estado = 1`)
         } else {
             trainers = await dbInstance.query(`select id_colaborador, nombre, apellido_paterno, email, telefono,direccion 
-                                    from colaboradores where categoria like "%entrenador%" or categoria like "%ENTRE%"`);
+                                    from colaboradores where categoria like "%entrenador%" or categoria like "%ENTRE%" and estado = 1`);
             baseService.getServiceResponse(SUCCESS_STATUS,SUCCESS_CODE
                                      , "trainers", trainers)   
         }
@@ -33,10 +33,10 @@ module.exports = function setupCustomerServices(dbInstance){
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
                          "Validation fields failed,see error description for more details ", errors)
         } else {
-            const existentDocument = await dbInstance.query('select documento from colaboradores where documento = ?', [trainer.documento])
-            const existentEmail = await dbInstance.query('SELECT email FROM colaboradores where email = ?', [trainer.email]);
+            const existentDocument = await dbInstance.query('select documento from colaboradores where documento = ? and estado = 1', [trainer.documento])
+            const existentEmail = await dbInstance.query('SELECT email FROM colaboradores where email = ? and estado = 1', [trainer.email]);
             if(existentDocument.length > 0) {
-                errors.push('Duplicated Document Id, please add a diferent document id')
+                errors.push('Duplicated Document Id, please add a diferent document id');
                 baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
                          'Duplicated field id , see errors for more details', errors);
             } else if(existentEmail.length > 0) {    
@@ -47,14 +47,14 @@ module.exports = function setupCustomerServices(dbInstance){
                 const newTrainer = await dbInstance.query('insert into colaboradores set ?',[trainer]);
                 baseService.getServiceResponse(SUCCESS_STATUS, CREATED_CODE,
                              "Trainer created", {userId: newTrainer.insertId,
-                                              ref: `${BASE_URL}/trainer/${newTrainer.insertId}/info` });
+                                              ref: `${BASE_URL}/trainer/${newTrainer.insertId}` });
             }
         }
         return baseService.returnData;
     }
 
     const get = async (id) => {
-        const trainer = await dbInstance.query('select * from colaboradores where id_colaborador = ?', [id])
+        const trainer = await dbInstance.query('select * from colaboradores where id_colaborador = ? and estado = 1', [id])
         if(trainer.length == 0){
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,"Trainer not found",  "Trainer not found");
         } else {
@@ -66,11 +66,11 @@ module.exports = function setupCustomerServices(dbInstance){
     //TODO: Improve validator
     const update = async (id, newTrainer) => {
         const errors = [];
-        const trainer = await dbInstance.query('select * from colaboradores where id_colaborador = ?', [id])
+        const trainer = await dbInstance.query('select * from colaboradores where id_colaborador = ? and estado = 1', [id])
         if(trainer.length == 0){
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,"Trainer not found", "Trainer not found");
         } else {
-            const documentExist = await dbInstance.query('select id_colaborador,documento from colaboradores where documento = ?', [newTrainer.documento])
+            const documentExist = await dbInstance.query('select id_colaborador,documento from colaboradores where documento = ? and estado = 1', [newTrainer.documento])
             if(documentExist.length > 0 && documentExist[0].id_colaborador !== id) {
                 errors.push('Document field must be unique, please add a diferent document id');
                 baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
@@ -81,7 +81,7 @@ module.exports = function setupCustomerServices(dbInstance){
                  baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE,
                          "Validation fields failed,see error description for more details ",errors)
                 } else {
-                    let modifiedTrainer = await dbInstance.query('update colaboradores set ? where id_colaborador=?', [newTrainer, id])
+                    let modifiedTrainer = await dbInstance.query('update colaboradores set ? where id_colaborador=? and estado = 1', [newTrainer, id])
                     baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "modified succesfully", modifiedTrainer)
                 }
             }
@@ -90,18 +90,18 @@ module.exports = function setupCustomerServices(dbInstance){
     }
 
     const deleteTrainer = async (id) => {
-        const trainerToDelete = await dbInstance.query('select * from colaboradores where id_colaborador = ?', [id]);
+        const trainerToDelete = await dbInstance.query('select * from colaboradores where id_colaborador = ? and estado = 1', [id]);
         if(trainerToDelete.length == 0) {
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", "Trainer not found");
         } else {
-            await dbInstance.query('delete from colaboradores where id_colaborador = ?', [id]);
+            await dbInstance.query('update colaboradores set estado = 0 where id_colaborador = ?', [id]);
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_NO_CONTENT, "Trainer deleted successfully", true);
         }
         return baseService.returnData;
     }
 
     const registerActivity = async (trainerId,activityId) =>{
-        const trainer = await dbInstance.query('select categoria from colaboradores where id_colaborador = ?', [trainerId]);
+        const trainer = await dbInstance.query('select categoria from colaboradores where id_colaborador = ? and estado = 1', [trainerId]);
         if(trainer.length == 0) {
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", "Trainer not found");
         } else if(trainer[0].categoria.toLowerCase() !== "entrenador") {
@@ -119,7 +119,7 @@ module.exports = function setupCustomerServices(dbInstance){
     }
 
     const getActivities = async (trainerId) => {
-        const trainer = await dbInstance.query(`select categoria from colaboradores where id_colaborador = ?`, [trainerId]);
+        const trainer = await dbInstance.query(`select categoria from colaboradores where id_colaborador = ? and estado = 1`, [trainerId]);
         if(trainer.length == 0) {
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found","Trainer not found");
         } else {
@@ -138,7 +138,7 @@ module.exports = function setupCustomerServices(dbInstance){
     }
     
     const getScheduledActivities = async (trainerId, time = "future") => {
-        const trainer = await dbInstance.query('select categoria from colaboradores where id_colaborador = ?', [trainerId]);
+        const trainer = await dbInstance.query('select categoria from colaboradores where id_colaborador = ? and estado = 1', [trainerId]);
         if(trainer.length == 0) {
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Trainer not found", "Trainer not found");
         } else if(trainer[0].categoria.toLowerCase() !== "entrenador"){

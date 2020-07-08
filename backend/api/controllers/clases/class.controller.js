@@ -3,6 +3,7 @@ const setupBaseController = require('../base.controller');
 const baseController = new setupBaseController();
 const dbServices = setupDbServices();
 const {INTERNAL_SERVER_ERROR_CODE} = require('../../../util/Constants');
+const { all } = require('.');
 
 const get = async (req, res) => {
     let responseCode;
@@ -42,8 +43,22 @@ const create = async (req, res) => {
     return res.status(responseCode).json(responseData);
 }
 
+const getAll = async (req, res) => {
+    let responseCode;
+    let responseData;
+    try {
+        const allClasses = await dbServices.classService.getAllScheduledClases();
+        responseCode = allClasses.responseCode;
+        responseData = baseController.getSucessResponse(allClasses.status, allClasses.message, allClasses.data);
+    }catch(error){
+        responseCode = INTERNAL_SERVER_ERROR_CODE;
+        responseData = baseController.getErrorResponse(error.message)
+    }
+    return res.status(responseCode).json(responseData);
+}
 
 module.exports = {
     get,
-    create
+    create,
+    getAll
 }

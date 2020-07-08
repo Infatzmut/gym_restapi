@@ -51,17 +51,20 @@ const validateBirthdate = (birthdate, err) =>{
 
   const validateDocument = (docType, docID , err) => {
     const dniRegex = /^[0-9]{1,8}$/;
-    const passportRegex = /^([a-zA-Z0-9]){1,12}$/;
+    const passportRegex = /^[A-PR-WY][1-9]\d\s?\d{4}[1-9]$/ig;
     const foreignCardRegex = /^([a-zA-Z0-9]){1,12}$/;
+    docType = parseInt(docType);
+    console.log(typeof docType);
+    
     if(!docType){
         err.push("Debe seleccionar un tipo de documento");
-    } else if(![1,2,3].includes(Number(docType))){
+    } else if(![1,2,3].includes(docType)){
         err.push("Documento invalido");
-    } else if(docType === '1' && !dniRegex.test(docID)){
+    } else if(docType === 1 && !dniRegex.test(docID)){
         err.push("Formato DNI invalido");
-    }  else if(docType === '2' && !foreignCardRegex.test(docID)){
+    }  else if(docType === 2 && !foreignCardRegex.test(docID)){
         err.push("Formato Carnet de extrangería invalido")
-    }else if(docType === '3' && !passportRegex.test(docID)) {
+    }else if(docType === 3 && !passportRegex.test(docID)) {
         err.push("Formato Pasaporte invalido")
     } 
   }
@@ -69,7 +72,7 @@ const validateBirthdate = (birthdate, err) =>{
   const validateAccess = (AccessType, err) => {
     if(!AccessType) {
         err.push("Ingrese Membresia")
-    } else if(![1,2].includes(Number(AccessType))) {
+    } else if(!["ESTANDAR","VIP"].includes(AccessType.toUpperCase())) {
         err.push("Membresia invalida")
     }
   }
@@ -85,11 +88,14 @@ const validateBirthdate = (birthdate, err) =>{
 
   const createUser = (user,err) => {
     validateName(user.nombre, err);
-    validateLastName(user.apellidoP, err);
-    validateSecondLastName(user.apellidoM, err);
+    validateLastName(user.apellido_paterno, err);
+    if(user.apellido_materno){
+        validateSecondLastName(user.apellido_materno, err);    
+    }
     validateEmail(user.email, err);
-    validateDocument(user.tipoDocumento, user.documentoId, err);
-    validateAccess(user.tipoMembresiaId, err);
+    validateBirthdate(user.fecha_nacimiento, err);
+    validateDocument(user.tipo_doc, user.documento, err);
+    validateAccess(user.membresia, err);
     //validateAddress(user.direccion, err);
   }
 
