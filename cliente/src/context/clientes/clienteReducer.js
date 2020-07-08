@@ -24,7 +24,7 @@ export default (state,action) => {
         case CLIENTE_ACTUAL:
             return {
                 ...state,
-                clienteActual: state.clientes.filter(cliente => cliente.id_cliente === action.payload)
+                clienteActual: action.payload
             }
         case LIMPIAR_CLIENTE_ACTUAL:
             return {

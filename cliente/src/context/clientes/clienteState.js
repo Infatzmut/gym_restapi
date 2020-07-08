@@ -134,8 +134,6 @@ const ClienteState = props => {
           console.log(error);
           
         }
-      
-        
     }
 
     const agregarCliente = async cliente => {
@@ -149,11 +147,19 @@ const ClienteState = props => {
         }
     }
 
-    const getCliente = clienteId => {
+    const getCliente = async clienteId => {
+      try{
+        const respuesta = await clienteAxios.get(`/customers/${clienteId}`)
+        const cliente = respuesta.data;
         dispatch({
-            type: CLIENTE_ACTUAL,
-            payload: clienteId
-        })
+          type: CLIENTE_ACTUAL,
+          payload: cliente
+      })
+      }catch(error){
+        console.log(error);
+        
+      }  
+      
     }
     const limpiarCliente = () => {
         dispatch({
