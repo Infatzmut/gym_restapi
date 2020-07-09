@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../styles/Header.css';
 
 const Header = () => {
     return(
             <div className="container-fluid">
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <a className="navbar-brand" href="#">
-                        <img src="/logo192.png" width="550" height="125" className="d-inline-block align-top" />
+                        <img src="/img/pesa.jpg"   className="d-inline-block align-top" />
                     </a>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav ml-auto mr-3">

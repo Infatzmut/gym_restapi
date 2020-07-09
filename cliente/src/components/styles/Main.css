@@ -1,0 +1,25 @@
+.main-landing {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.landing-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.landing-title > h1{
+    font-size: 10rem;
+    text-transform: uppercase;
+    margin-bottom: 0px;
+    height: 120px;
+}
+.fitness {
+    font-weight: 100;
+}
+.workout {
+ color: peru;
+ text-decoration: underline;
+ font-weight: 800;
+}

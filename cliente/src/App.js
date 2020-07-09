@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Header from './components/layout/Header';
+import Main from './components/layout/Main';
 import ListadoClientes from './components/clientes/ListadoClientes';
 import ListadoPersonal from './components/personal/ListadoPersonal';
 import ListadoActividades from './components/actividades/ListadoActividades';
@@ -21,6 +22,7 @@ function App() {
             <Router>
               <Header/>
               <Switch>
+                <Route exact path ="/" component={Main}/>
                 <Route exact path ="/clientes" component={ListadoClientes}/>
                 <Route exact path ="/personal" component={ListadoPersonal}/>
                 <Route exact path ="/actividades" component={ListadoActividades}/>
