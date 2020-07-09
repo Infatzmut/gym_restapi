@@ -1,4 +1,5 @@
 import React, {useState, useContext} from 'react';
+import '../styles/NuevoCliente.css';
 import clienteContext from '../../context/clientes/clienteContext';
 const NuevoCliente = () => {
 
@@ -56,6 +57,9 @@ const NuevoCliente = () => {
     
     return ( 
         <div className="container">
+            <div className="container-title">
+                 <h1>Registro Cliente</h1>
+            </div>
             <form  id="formularioCliente" onSubmit={onSubmit}>
                 <div className="form-group">
                     <label htmlFor="nombre">Nombres</label>
@@ -185,7 +189,7 @@ const NuevoCliente = () => {
                         <option value="ESTANDAR">ESTANDAR</option>
                     </select>
                 </div>
-                <div className="form-group">
+                <div className="form-group button-container">
                     <input type="submit" id="submit" className="btn btn-primary" value="Agregar" />
                     <a className="btn btn-danger" href="../">Cancelar</a>
                 </div>

@@ -77,6 +77,9 @@ const NuevoPersonal = () => {
     }
     return ( 
         <div className="container">
+            <div className="container-title">
+                 <h1>Registro Entrenador</h1>
+            </div>
             <form  id="formularioCliente" onSubmit={onSubmit}>
                 <div className="form-group">
                     <label htmlFor="nombre">Nombres</label>
@@ -141,7 +144,7 @@ const NuevoPersonal = () => {
                             <option value="administrativo">Administrativo</option>
                     </select>
                 </div>
-                <div className="form-group">
+                <div className="form-group button-container">
                     <input type="submit" className="btn btn-primary" value="Agregar" />
                     <a className="btn btn-danger" href="../">Cancelar</a>
                 </div>

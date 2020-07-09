@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import {Link} from 'react-router-dom';
 import Cliente from './Cliente';
+import '../styles/ListadoClientes.css';
 import clientesContext from '../../context/clientes/clienteContext';
 const ListadoClientes = () => {
 
@@ -12,9 +13,9 @@ const ListadoClientes = () => {
     }, [])
     if(clientes.length === 0) {
         return (
-            <div className="container">
-                <h2>No hay clientes registrados</h2>
-                <h3>Comienza creando uno :</h3>
+            <div className="no-clients-container container">
+                <h2 className="no-clients-title">No hay clientes registrados</h2>
+                <h3 className="no-clients-subtitle">Comienza creando uno :</h3>
                 <br/>
                 <Link className="btn btn-primary" to={"/form-cliente"}>Crear nuevo cliente</Link>
             </div>

@@ -6,7 +6,7 @@ const Header = () => {
     return(
             <div className="container-fluid">
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <a className="navbar-brand" href="#">
+                    <a className="navbar-brand" href="/">
                         <img src="/img/pesa.jpg"   className="d-inline-block align-top" />
                     </a>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
