@@ -38,7 +38,7 @@ const RegistrarCliente = ({clase, close}) => {
             <form onSubmit={onSubmit}>
             <select name="cliente" onChange={handleChange}>
                 <option value="">------Seleccione ---------</option>
-                {clientes.map(cliente => <option value={cliente.id_cliente}>
+                {clientes.map(cliente => <option key={cliente.id_cliente} value={cliente.id_cliente}>
                     {cliente.nombre} {cliente.apellido_paterno}</option>)}
             </select>
             <button>Registrar</button>

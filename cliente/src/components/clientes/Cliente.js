@@ -59,7 +59,7 @@ const Cliente = ({cliente}) => {
     }
 
     const handleOpenInfo = () => {
-        getCliente(cliente.id_cliente)
+        getCliente(cliente.id_cliente);
         handleInspec(true);
     }
 
@@ -96,10 +96,10 @@ const Cliente = ({cliente}) => {
             {clienteActual ? (
                 <Fragment>
                     <Modal.Header closeButton>
-                    <Modal.Title>{clienteActual[0].nombre}</Modal.Title>
+                    <Modal.Title>{clienteActual.nombre}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <ClienteDetalle cliente={clienteActual[0]}/>
+                        <ClienteDetalle cliente={clienteActual}/>
                     </Modal.Body>
                     <Modal.Footer>
                     <button onClick={() => {
@@ -115,7 +115,7 @@ const Cliente = ({cliente}) => {
             {clienteActual ? (
                 <Fragment>
                     <Modal.Header closeButton>
-                    <Modal.Title>Edicion de: {clienteActual[0].nombre}</Modal.Title>
+                    <Modal.Title>Edicion de: {clienteActual.nombre}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <NuevoCliente />

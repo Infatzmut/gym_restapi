@@ -12,28 +12,17 @@ const {
 module.exports = function setupClassServices(dbInstance) {
     const baseService = new setupBaseService();
 
-    const getClassInfo = async (classId) => {
-        if(!classId){
-            baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "INVALID SEARCH PARAMETER", "NO CLASS ID SENDED");
-        } else {
-            const classInfo = await dbInstance.query(`select a.* , da.*, c.nombre, c.apellido_paterno 
-                                                      from detalle_actividad da  
-                                                      inner join actividades_entrenador ae on ae.id_act_entrenador = da.id_actividad_ent  
-                                                      inner join actividades a on a.id_actividad = ae.id_actividad
-                                                      inner join colaboradores c on ae.id_entrenador = c.id_colaborador
-                                                      where id_detalle_actividad = ? and c.estado = 1`, [classId]);
-            baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetching data for selected class", classInfo);
-        }
-        return baseService.returnData;
-    }
 
     const getAllScheduledClases = async () => {
-        const allClasses = await dbInstance.query('select * from actividad_cliente');
+        const allClasses = await dbInstance.query('select * from detalle_actividad');
         baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetching classes", allClasses);
         return baseService.returnData;
     }
 
-    const create = async  (customerId, classId) => {
+    const create = async (registro) => {
+        console.log(registro)
+        const customerId = registro.cliente;
+        const classId = registro.claseId;
         if(!customerId || !classId){
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "INCOMPLETE DATA, PLEASE COMPLETE THE DATA TO PROCCED", "NO CUSTOMERID OR CLASSID FOUND");
         } else {
@@ -56,7 +45,6 @@ module.exports = function setupClassServices(dbInstance) {
     }
 
     return {
-        getClassInfo,
         create,
         getAllScheduledClases
     }

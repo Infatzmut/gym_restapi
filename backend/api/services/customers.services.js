@@ -95,14 +95,14 @@ module.exports = function setupCustomerServices(dbInstance){
         if(!customerId) {
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "INVALID SEARCH PARAMETER", "NO CUSTOMER ID SENDED");
         } else {
-            const classesPerCustomer = await dbInstance.query(`select  bh.hora_inicio,bh.hora_fin, a.nombre as actividad, da.fechal. c.nombre, c.apellido_paterno 
+            const classesPerCustomer = await dbInstance.query(`select  bh.hora_inicio,bh.hora_fin, a.nombre as actividad, da.fechal, c.nombre, c.apellido_paterno 
                                                                 from actividad_cliente ac 
-                                                                inner join detalle_actividad da on ac.detalle_act = da.id_detalle_actividad
+                                                                inner join detalle_actividad da on ac.id_detalle_act = da.id_detalle_actividad
                                                                 inner join bloque_horario bh on bh.id_bloque_horario = da.id_bloque_horario
                                                                 inner join actividades_entrenador ae on ae.id_act_entrenador = da.id_actividad_ent
                                                                 inner join actividades a on a.id_actividad = ae.id_actividad
                                                                 inner join colaboradores c on c.id_colaborador = ae.id_entrenador 
-                                                                where id_cliente = ? `, [customerId]);
+                                                                where ac.id_cliente = ? `, [customerId]);
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "FETCHING CUSTOMER CLASES", classesPerCustomer);
         }
         return baseService.returnData;

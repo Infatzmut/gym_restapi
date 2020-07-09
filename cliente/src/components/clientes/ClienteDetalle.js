@@ -18,7 +18,7 @@ const ClienteDetalle = ({cliente}) => {
         <p>{cliente.nombre}</p>
         <p>{cliente.id_cliente}</p>
         <p>{cliente.nombre}</p>
-        <ListadoClases clases = {clasesCliente}/>
+        <ListadoClases key= {cliente.id_cliente} clases = {clasesCliente}/>
       </div>
      );
 }

@@ -1,28 +1,27 @@
 import React, {useContext,Fragment} from 'react';
 import actividadContext from '../../context/actividades/actividadesContext';
-import Clase from '../clases/Clase';
 import ListadoClases from '../clases/ListadoClases';
 const Actividad = () => {
 
     const actividadesContext = useContext(actividadContext);
     const {actividadActual, clasesActividad} = actividadesContext;
 
-    
     return (
         <Fragment> 
-                <div>
+                {actividadActual? (
+                    <div>
                     <div className="row">
                         <div className="col">
-                            <p>{actividadActual[0].descripcion}</p>
-                            <p>{actividadActual[0].nombre}</p>
+                            <p>{actividadActual.descripcion}</p>
+                            <p>{actividadActual.nombre}</p>
                             <p>Desde actividad</p>
                             <p>Desde actividad</p>
                         </div> 
                         <div className="col">
                             <figure>
-                                <img src="" alt={actividadActual[0].nombre} />
+                                <img src={`img/${actividadActual.imagenRef}.jpg`} alt={actividadActual.nombre} />
                                 <figcaption>
-                                    {actividadActual[0].nombre}
+                                    {actividadActual.nombre}
                                 </figcaption>
                             </figure>
                         </div>
@@ -32,6 +31,7 @@ const Actividad = () => {
                         
                     </div>
                 </div>
+                ): <p>loading</p>}
         </Fragment>
     );
 }

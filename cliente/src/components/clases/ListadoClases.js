@@ -2,7 +2,7 @@ import React from 'react';
 import Clase from './Clase';
 const ListadoClases = ({clases}) => {
     
-    if(!clases) {
+    if(!clases || clases.length === 0) {
         return (
             <div>
                <h2>No hay clases Registradas</h2> 
