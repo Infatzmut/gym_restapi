@@ -1,11 +1,12 @@
 import React from 'react';
 import Clase from './Clase';
+import '../styles/ListadoClases.css';
 const ListadoClases = ({clases}) => {
     
     if(!clases) {
         return (
-            <div>
-               <h2>No hay clases Registradas</h2> 
+            <div className="none-class">
+               <h2 className="none-class-title">No hay clases Registradas</h2> 
             </div>
         )
     }

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import actividadContext from '../../context/actividades/actividadesContext';
+import '../styles/ListadoActividades.css';
 import {Link} from 'react-router-dom';
 const ListadoActividades = () => {
     
@@ -19,19 +20,19 @@ const ListadoActividades = () => {
     
     return ( 
         <div className="container">
-        <div class="header-section header-section_padding-top-bottom text-center">
-            <h1 class="header-section__title header-section__title_sm">Lista de Entrenamientos</h1>
+        <div class="title-container">
+            <h1 class="title">Lista de Entrenamientos</h1>
         </div>
-         <div class="columns columns_multiline columns_no-gutter">
+         <div class="columns columns_multiline columns_no-gutter directions">
             {actividades ? 
                 actividades.map(actividad => (
-                    <div class="col col_6 col_4-desktop-md col_3-desktop-xl">
+                    <div class="activity-container">
                         <Link to={"/actividades-descripcion"} class="border-box" href="" onClick={() =>{
                                     
                                     obtenerActividad(actividad.id_actividad)}} >
-                            <figure class="border-box__img-container lazy-container-image ">
-                                <img class="border-box__img" src={`img/${actividad.imagenRef}.jpg`} alt={`${actividad.nombre}`} data-object-fit="cover" />
-                            </figure>
+                            <div class="image">
+                                <img src={`img/${actividad.imagenRef}.jpg`} alt={`${actividad.nombre}`} data-object-fit="cover" />
+                            </div>
                             <div class="border-box__info-container">
                                 <h4 class="border-box__title">{actividad.nombre}</h4>
                                 <h5 class="border-box__additional-info border-box__additional-info_gray border-box__additional-info_no-margin">{actividad.descripcion.substring(0, 80)}...</h5>

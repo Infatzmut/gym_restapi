@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import {Link} from 'react-router-dom';
 import Cliente from './Cliente';
 import '../styles/ListadoClientes.css';
+import '../styles/Listado.css';
 import clientesContext from '../../context/clientes/clienteContext';
 const ListadoClientes = () => {
 
@@ -22,21 +23,21 @@ const ListadoClientes = () => {
         )
     }
     return ( 
-        <div className="container-fluid">
+        <div className="container">
         <div>
-            <h3>Lista Usuarios</h3>
+            <h3 className="list-title">Lista de Usuarios</h3>
         </div>
-        <table className="table">
+        <table className="table table-hover">
             <thead className="thead-light">
                 <tr>
-                    <td>CODIGO</td>
-                    <td>NOMBRE</td>
-                    <td>APELLIDO</td>
-                    <td>TELEFONO</td>
-                    <td>EMAIL</td>
+                    <td>Codigo</td>
+                    <td>Nombre</td>
+                    <td>Apellido</td>
+                    <td>Telefono</td>
+                    <td>Email</td>
                     <td>Fecha Registro</td>
-                    <td>TIPO_MEMBRESIA</td>
-                    <td>DIRECCION</td>
+                    <td>Tipo_Membresia</td>
+                    <td>Direccion</td>
                     <td>Accion</td>
                 </tr>
             </thead>

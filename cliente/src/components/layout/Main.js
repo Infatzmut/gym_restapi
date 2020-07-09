@@ -4,7 +4,9 @@ import '../styles/Main.css';
 const Main = () => {
     return (
         <div className="main-landing">
-             <img src="/img/gym-guy.gif" />
+             <div className="image-container">
+                <img src="/img/gym-guy.gif" />
+             </div>
              <div className="landing-title">
                  <h1 className="fitness">
                      Fitness
