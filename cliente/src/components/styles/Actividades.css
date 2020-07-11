@@ -1,0 +1,31 @@
+.title-activity {
+    color: orange;
+    font-size: 5rem;
+    border-bottom: 1px solid orange;
+}
+.description-activity {
+    font-size: 2rem;
+}
+.text-container {
+    margin-top: 60px;
+    border-bottom: 1px solid gray;
+}
+.activity-image {
+    display: flex;
+    align-items: center;
+}
+.activity-image > figure > img {
+    width: 100%;
+    min-width: 350px;
+}
+.activity-image > figure  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0px;
+}
+.list-class-activities {
+    justify-content: center;
+    height: 160px;
+    margin: 20px 0px;
+}

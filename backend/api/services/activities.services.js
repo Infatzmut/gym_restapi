@@ -13,10 +13,12 @@ module.exports = function setupActivitiesServices(dbInstance) {
     const baseService = new setupBaseService();
 
     const get = async (id) => {
+        const beneficios = await dbInstance.query('select descripcion from beneficios where id_act = ?', [id])
         const activity = await dbInstance.query('select * from actividades where id_actividad = ?', [id]);
         if(activity.length == 0) {
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "Activity not found", {});
         } else {
+            activity[0].beneficios = beneficios;
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Activity info", activity)
         }
         return baseService.returnData;
@@ -70,7 +72,7 @@ module.exports = function setupActivitiesServices(dbInstance) {
                                         inner join detalle_actividad da on da.id_actividad_ent = ae.id_act_entrenador
                                         inner join colaboradores c on c.id_colaborador = ae.id_entrenador 
                                         inner join bloque_horario bh on da.id_bloque_horario = bh.id_bloque_horario
-                                        where a.id_actividad = ? and fechal > ${currentDate}`, [activityid])
+                                        where a.id_actividad = ? and c.estado = 1 and fechal > ${currentDate}`, [activityid])
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetching scheduled clases", scheduledClases);
         }
         return baseService.returnData;                            

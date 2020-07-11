@@ -21,8 +21,6 @@ const create = async (req, res) => {
     }catch(error){
         responseCode = INTERNAL_SERVER_ERROR_CODE;
         responseData = baseController.getErrorResponse(error.message);
-        console.log(error);
-        
     }
     return res.status(responseCode).json(responseData);
 }
@@ -41,7 +39,23 @@ const getAll = async (req, res) => {
     return res.status(responseCode).json(responseData);
 }
 
+const deleteCustomerClass = async (req, res) => {
+    let responseCode;
+    let responseData;
+    try {
+        const {id} = req.params;
+        const deletedClass = await dbServices.classService.delCustomerClass(id);
+        responseCode = deletedClass.responseCode;
+        responseData = baseController.getSucessResponse(deletedClass.status, deletedClass.message, deletedClass.data);
+    } catch(error){
+        responseCode = INTERNAL_SERVER_ERROR_CODE;
+        responseData = baseController.getErrorResponse(error.message)
+    }
+    return res.status(responseCode).json(responseData);
+}
+
 module.exports = {
     create,
-    getAll
+    getAll,
+    deleteCustomerClass
 }

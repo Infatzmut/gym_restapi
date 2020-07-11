@@ -5,6 +5,7 @@ const personal = require('./trainers');
 const activities = require('./activities')
 const classes = require('./clases');
 
+
 router.use('/customers', customers);
 router.use('/personal', personal);
 router.use('/activities', activities);

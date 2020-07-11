@@ -1,4 +1,4 @@
-import { OBTENER_ACTIVIDADES, ACTIVIDAD_ACTUAL, OBTENER_CLASES_ACTIVIDAD } from '../../types'
+import { OBTENER_ACTIVIDADES, ACTIVIDAD_ACTUAL, OBTENER_CLASES_ACTIVIDAD, AGREGAR_CLASE_CLIENTE } from '../../types'
 
 export default (state, action) => {
     switch(action.type) {
@@ -17,6 +17,11 @@ export default (state, action) => {
                 ...state,
                 clasesActividad: action.payload
             }        
+        case AGREGAR_CLASE_CLIENTE:
+            return {
+                ...state,
+                clasesActividad: state.clasesActividad.map(clase => clase.id === action.payload ? clase.capacidad = clase.capacidad-1 :clase )
+            }    
         default: 
             return state;
     }

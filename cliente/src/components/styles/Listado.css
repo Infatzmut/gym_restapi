@@ -1,0 +1,16 @@
+.list-title {
+    margin: 20px 0px;
+    font-size: 3rem;
+    color: orange;
+}
+.thead-light {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: gray;
+}
+tbody {
+    font-size: 1.3rem;
+}
+.table td > button{
+    margin: 0px 5px;
+}

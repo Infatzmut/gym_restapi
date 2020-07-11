@@ -20,7 +20,7 @@ module.exports = function setupCustomerServices(dbInstance){
                                     from colaboradores where nombre like %${query}% or apellido_paterno like %${query}% and estado = 1`)
         } else {
             trainers = await dbInstance.query(`select id_colaborador, nombre, apellido_paterno, email, telefono,direccion 
-                                    from colaboradores where categoria like "%entrenador%" or categoria like "%ENTRE%" and estado = 1`);
+                                    from colaboradores where estado = 1 and (categoria like "%entrenador%" or categoria like "%ENTRE%") `);
             baseService.getServiceResponse(SUCCESS_STATUS,SUCCESS_CODE
                                      , "trainers", trainers)   
         }
@@ -152,22 +152,25 @@ module.exports = function setupCustomerServices(dbInstance){
                                                             from detalle_actividad d
                                                             inner join actividades_entrenador e on e.id_act_entrenador = d.id_actividad_ent 
                                                             inner join actividades a on a.id_actividad = e.id_actividad
+                                                            inner join colaboradores c on c.id_colaborador = e.id_entrenador
                                                             inner join bloque_horario bh on bh.id_bloque_horario = d.id_bloque_horario
-                                                            where e.id_entrenador = ? `, [trainerId]);
+                                                            where e.id_entrenador = ? and c.estado = 1`, [trainerId]);
                                 break;
                 case "past":    sActivities = await dbInstance.query(`select d.fechal, d.capacidad, bh.hora_inicio, bh.hora_fin, a.nombre 
                                                             from detalle_actividad d
                                                             inner join actividades_entrenador e on e.id_act_entrenador = d.id_actividad_ent 
                                                             inner join actividades a on a.id_actividad = e.id_actividad
+                                                            inner join colaboradores c on c.id_colaborador = e.id_entrenador
                                                             inner join bloque_horario bh on bh.id_bloque_horario = d.id_bloque_horario 
-                                                            where e.id_entrenador = ? and d.fechal <= ${actualDate}`, [trainerId]);
+                                                            where e.id_entrenador = ? and c.estado = 1 and d.fechal <= ${actualDate}`, [trainerId]);
                                 break;     
                 default:        sActivities = await dbInstance.query(`select d.fechal, d.capacidad, bh.hora_inicio, bh.hora_fin, a.nombre 
                                                             from detalle_actividad d
                                                             inner join actividades_entrenador e on e.id_act_entrenador = d.id_actividad_ent 
                                                             inner join actividades a on a.id_actividad = e.id_actividad
+                                                            inner join colaboradores c on c.id_colaborador = e.id_entrenador
                                                             inner join bloque_horario bh on bh.id_bloque_horario = d.id_bloque_horario
-                                                            where e.id_entrenador = ? and d.fechal >= ${actualDate}`, [trainerId]);
+                                                            where e.id_entrenador = ? and c.estado = 1 and d.fechal >= ${actualDate}`, [trainerId]);
                                 break;                      
             }
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_CODE, "Fetching future activities", sActivities)

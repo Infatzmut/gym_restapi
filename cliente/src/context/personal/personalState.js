@@ -5,7 +5,9 @@ import personalContext from './personalContext';
 import { 
     OBTENER_PERSONAL, 
     PERSONAL_ACTUAL, 
-    OBTENER_CLASES_ENTRENADOR, 
+    OBTENER_CLASES_ENTRENADOR,
+    OBTENER_ACTIVIDADES_ENTRENADOR,
+    LIMPIAR_PERSONAL_ACTUAL,
     ELIMINAR_PERSONAL,
     EDITAR_PERSONAL, 
     AGREGAR_PERSONAL, 
@@ -13,56 +15,38 @@ import {
 } from '../../types';
 
 const PersonalState = props => {
-
-    const personal = [
-        {
-            "id_colaborador": 1,
-            "nombre": "Juan",
-            "apellido_paterno": "Perez",
-            "email": "juan@perez.com",
-            "telefono": "456789123",
-            "direccion": "Av su hogar 2930"
-          },
-          {
-            "id_colaborador": 3,
-            "nombre": "Carlos",
-            "apellido_paterno": "Perez",
-            "email": "carlos@carlos.com",
-            "telefono": "123456789",
-            "direccion": "Av pedro perez 2043"
-          },
-          {
-            "id_colaborador": 4,
-            "nombre": "Carlos",
-            "apellido_paterno": "Perez",
-            "email": "carlos1@carlos.com",
-            "telefono": "123456789",
-            "direccion": "Av pedro perez 2043"
-          }
-    ]
-
-
     const initialState = {
         personal: [],
         personalActual: null,
         errorFormulario: false,
-        clasesTrainer: null
+        clasesTrainer: null,
+        actividades: null
     }
 
     const [state, dispatch] = useReducer(personalReducer, initialState);
 
-    const obtenerPersonal = () => {
-        dispatch({
-            type: OBTENER_PERSONAL,
-            payload: personal
-        })
+    const obtenerPersonal = async () => {
+        try{
+            const respuesta = await clienteAxios('/personal');
+            const personal = respuesta.data;
+            dispatch({
+                type: OBTENER_PERSONAL,
+                payload: personal.data
+            })
+        }catch(error){
+            console.log(error.response.data);
+        }
     }
 
-    const agregarPersonal = nuevoPersonal => {
-        dispatch({
-            type: AGREGAR_PERSONAL,
-            payload : nuevoPersonal
-        })
+    const agregarPersonal = async nuevoPersonal => {
+        try{
+            await clienteAxios.post('/personal/', nuevoPersonal);
+            dispatch({
+                type: AGREGAR_PERSONAL
+            })
+        }catch(error){
+            throw new Error(JSON.stringify(error.message))
+        }
     }
 
     const mostrarError = estado => {
@@ -72,32 +56,73 @@ const PersonalState = props => {
         })
     }
 
-    const seleccionarPersonal = personalId => {
-        dispatch({
-            type: PERSONAL_ACTUAL,
-            payload: personalId
-        })
+    const seleccionarPersonal = async personalId => {
+        try {
+            const respuesta = await clienteAxios(`/personal/${personalId}`);
+            const personaActual = respuesta.data;
+            dispatch({
+                type: PERSONAL_ACTUAL,
+                payload: personaActual.data
+            })
+        } catch(error){
+            throw new Error(JSON.stringify(error.message))
+        }
     }
 
-    const obtenerClasesTrainer = entrenadorId =>{
-        dispatch({
-            type: OBTENER_CLASES_ENTRENADOR,
-            payload: entrenadorId
-        })
-    } 
-
-    const modificarPersonal = nuevoPersonal => {
-        dispatch({
-            type: EDITAR_PERSONAL,
-            payload: nuevoPersonal
-        })
+    const obtenerClasesTrainer = async entrenadorId =>{
+        try {
+            const respuesta = await clienteAxios(`/personal/${entrenadorId}/scheduledActivities`);
+            const clasesTrainer = respuesta.data;
+            dispatch({
+                type: OBTENER_CLASES_ENTRENADOR,
+                payload: clasesTrainer.data
+            })
+        } catch(error){
+            throw new Error(JSON.stringify(error.message))
+        }
+    }
+    
+    const obtenerActividades = async entrenadorId => {
+        try {   
+            const respuesta = await clienteAxios(`/personal/${entrenadorId}/activities`);
+            const actividades = respuesta.data;
+            dispatch({
+                type:  OBTENER_ACTIVIDADES_ENTRENADOR,
+                payload: actividades.data 
+            })
+        } catch(error){
+            throw new Error(JSON.stringify(error.message))
+        }
     }
 
-    const eliminarPersonal = personalId => {
+    const modificarPersonal = async nuevoPersonal => {
+        try {
+            const respuesta = await clienteAxios.put(`/personal/${nuevoPersonal.id_colaborador}`, nuevoPersonal);
+            dispatch({
+                type: EDITAR_PERSONAL,
+                dispatch: nuevoPersonal
+            })
+        } catch(error){
+            throw new Error(JSON.stringify(error.message))
+        }
+    }
+
+    const limpiarPersonalActual = () => {
         dispatch({
-            type: ELIMINAR_PERSONAL,
-            payload: personalId
-        })
+            type: LIMPIAR_PERSONAL_ACTUAL
+        });
+    }
+
+    const eliminarPersonal = async personalId => {
+        try{
+            await clienteAxios.delete(`/personal/${personalId}`);
+            dispatch({
+                type: ELIMINAR_PERSONAL,
+                payload: personalId
+            })
+        } catch(error){
+            throw new Error(JSON.stringify(error.response.data))
+        }
     }
 
     return (
@@ -107,12 +132,15 @@ const PersonalState = props => {
                 personalActual: state.personalActual,
                 errorFormulario: state.errorFormulario,
                 clasesTrainer: state.clasesTrainer,
+                actividades: state.actividades,
                 obtenerPersonal,
                 mostrarError,
                 agregarPersonal,
                 modificarPersonal,
                 seleccionarPersonal,
                 obtenerClasesTrainer,
+                obtenerActividades,
+                limpiarPersonalActual,
                 eliminarPersonal
             }}
         >

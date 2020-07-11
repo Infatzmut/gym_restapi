@@ -2,13 +2,24 @@ import React , {useReducer }from 'react';
 
 import clienteContext from './clienteContext';
 import clienteReducer from './clienteReducer';
-import { OBTENER_CLIENTES, AGREGAR_CLIENTE, CLIENTE_ACTUAL, ELIMINAR_CLIENTE, VALIDAR_CLIENTE, LIMPIAR_CLIENTE_ACTUAL, AGREGAR_CLASE_CLIENTE, OBTENER_CLASES_CLIENTE, LIMPIAR_CLASES_CLIENTE } from '../../types';
+import { OBTENER_CLIENTES, 
+          AGREGAR_CLIENTE, 
+          CLIENTE_ACTUAL, 
+          ELIMINAR_CLIENTE, 
+          VALIDAR_CLIENTE, 
+          LIMPIAR_CLIENTE_ACTUAL, 
+          AGREGAR_CLASE_CLIENTE, 
+          OBTENER_CLASES_CLIENTE, 
+          LIMPIAR_CLASES_CLIENTE, 
+          ERROR_ELIMINAR_CLIENTE,
+          ELIMINAR_CLASE_CLIENTE } from '../../types';
 import clienteAxios from '../../config/axios';
 const ClienteState = props => {
 
     const initialState = {
         clientes: [],
         clases: [],
+        error: false,
         errorFormulario: false,
         clienteActual: null,
         clasesCliente: null
@@ -27,7 +38,7 @@ const ClienteState = props => {
             payload: clientes.data
         })   
         }catch(error){
-          console.log(error);
+          throw new Error(JSON.stringify(error.response.data))
         }
     }
 
@@ -38,7 +49,7 @@ const ClienteState = props => {
             type: AGREGAR_CLIENTE,
           })
         } catch(error) {
-          console.log(error.message)          
+          throw new Error(JSON.stringify(error.response.data));         
         }
     }
 
@@ -51,8 +62,7 @@ const ClienteState = props => {
           payload: cliente.data
       })
       }catch(error){
-        console.log(error);
-        
+        throw new Error(JSON.stringify(error.response.data));
       }  
       
     }
@@ -71,23 +81,20 @@ const ClienteState = props => {
     const eliminarCliente = async clienteId => {
       try{
         const respuesta = await clienteAxios.delete(`/customers/${clienteId}`);
-        console.log(respuesta);
         dispatch({
           type: ELIMINAR_CLIENTE,
           payload: clienteId
         })  
       }catch (error){
-        console.log(error);        
+        dispatch({
+          type: ERROR_ELIMINAR_CLIENTE,
+          payload: error.response.data
+        })
+        throw new Error(JSON.stringify(error.response.data))      
       }
     }
 
-    const agregarClaseCliente = async registro => {
-        console.log(registro)
-        const respuesta = await clienteAxios.post(`/classes`, registro);
-        const nuevaClase = respuesta.data;
-        console.log(nuevaClase.data);
-      
-    }
+   
 
     const obtenerClasesCliente = async clienteId => {
       try {
@@ -98,7 +105,7 @@ const ClienteState = props => {
           payload: clasesCliente.data
         })
       }catch(error) {
-        console.log(error);     
+        throw new Error(JSON.stringify(error.response.data));     
       }
     }
 
@@ -108,11 +115,24 @@ const ClienteState = props => {
       })
     }
 
+    const eliminarClaseCliente = async claseId => {
+      try {
+        await clienteAxios.delete(`/classes/${claseId}`);
+        dispatch({
+          type: ELIMINAR_CLASE_CLIENTE,
+          payload: claseId
+        })
+      } catch(error) {
+        throw new Error(JSON.stringify(error.response.data))
+      }
+    }
+
     return (
         <clienteContext.Provider
             value = {{
                 clientes: state.clientes,
                 clases: state.clases,
+                error: state.error,
                 errorFormulario: state.errorFormulario,
                 clienteActual: state.clienteActual,
                 clasesCliente: state.clasesCliente,
@@ -122,9 +142,9 @@ const ClienteState = props => {
                 getCliente,
                 limpiarCliente,
                 eliminarCliente,
-                agregarClaseCliente,
                 obtenerClasesCliente,
-                limpiarClasesCliente
+                limpiarClasesCliente,
+                eliminarClaseCliente
             }}
         >
             {props.children}

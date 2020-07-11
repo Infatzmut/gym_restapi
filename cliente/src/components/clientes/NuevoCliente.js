@@ -1,5 +1,7 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
+import '../styles/NuevoCliente.css';
 import clienteContext from '../../context/clientes/clienteContext';
+import Swal from 'sweetalert2'
 const NuevoCliente = () => {
 
     const [cliente, guardarCliente] = useState({
@@ -16,7 +18,27 @@ const NuevoCliente = () => {
     });
 
     const clientesContext = useContext(clienteContext);
-    const {agregarCliente, validarCliente} = clientesContext;
+    const {errorFormulario,agregarCliente,clienteActual, validarCliente} = clientesContext;
+
+    useEffect(()=> {
+        if(clienteActual) {
+            guardarCliente(clienteActual)
+        } else {
+            guardarCliente({
+                nombre:'',
+                apellido_paterno:'',
+                apellido_materno:'',
+                fecha_nacimiento: '',
+                email:'',
+                tipo_doc:'',
+                documento: '',
+                telefono: '',
+                direccion: '',
+                membresia: ''
+            })
+        }
+    }, [clienteActual])
+    
 
     const {nombre, apellido_paterno, apellido_materno, fecha_nacimiento, email, tipo_doc, documento, telefono, direccion, membresia} = cliente;
     const handleChange = e => {
@@ -29,33 +51,55 @@ const NuevoCliente = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         if(!nombre.trim() || !apellido_paterno.trim() ||
-            !fecha_nacimiento.trim() || !email.trim() || !tipo_doc.trim() || !documento.trim() || !telefono.trim() || !direccion.trim() || !membresia.trim()){
+            !fecha_nacimiento.trim() || !email.trim() || !tipo_doc || !documento.trim() || !telefono.trim() || !direccion.trim() || !membresia.trim()){
                 validarCliente(true)
                 return;
             }
         validarCliente(false);
         // Agregar cliente
-        console.log("agregar cliente");
-        
-        agregarCliente(cliente);
+        if(!clienteActual){
+            agregarCliente(cliente)
+            .then(_ => {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Personal registrado',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
+                  // Reiniciar el form
+                guardarCliente({
+                    nombre:'',
+                    apellido_paterno:'',
+                    apellido_materno:'',
+                    fecha_nacimiento: '',
+                    email:'',
+                    tipo_doc:'',
+                    documento: '',
+                    telefono: '',
+                    direccion: '',
+                    membresia: ''
+                })
+            })
+            .catch(error => {
+                error = JSON.parse(error.message);
+                Swal.fire(
+                    `${error.status}`,
+                    `${error.message}`,
+                    `${error.status.toLowerCase()}`
+                    );
+                });
+            } else {
 
-        // Reiniciar el form
-        /*guardarCliente({
-            nombre:'',
-            apellido_paterno:'',
-            apellido_materno:'',
-            fecha_nacimiento: '',
-            email:'',
-            tipo_doc:'',
-            documento: '',
-            telefono: '',
-            direccion: '',
-            membresia: ''
-        })*/
-    }
-    
+            }
+        }
+        
     return ( 
         <div className="container">
+            {errorFormulario ? <p className="alert alert-error">Todos los campos son obligatorios</p>: null}
+            <div className="container-title">
+                {clienteActual? <h1>Edicion Cliente</h1>: <h1>Registro Cliente</h1>}
+            </div>
             <form  id="formularioCliente" onSubmit={onSubmit}>
                 <div className="form-group">
                     <label htmlFor="nombre">Nombres</label>

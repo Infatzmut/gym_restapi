@@ -5,7 +5,8 @@ import clienteAxios from '../../config/axios';
 import {
     ACTIVIDAD_ACTUAL,
     OBTENER_ACTIVIDADES,
-    OBTENER_CLASES_ACTIVIDAD
+    OBTENER_CLASES_ACTIVIDAD,
+    AGREGAR_CLASE_CLIENTE
 } from '../../types';
 const ActividadState = (props) => {
 
@@ -27,7 +28,7 @@ const ActividadState = (props) => {
                 payload: actividades.data
             })
         } catch(error){
-            console.log(error);
+            throw new Error(JSON.stringify(error.response.data))
         }
     }
 
@@ -35,13 +36,12 @@ const ActividadState = (props) => {
         try{
             const resultado = await clienteAxios.get(`/activities/${actividadId}`);
             const actividad = resultado.data;
-            console.log(actividad.data[0])
             dispatch({
                 type: ACTIVIDAD_ACTUAL,
                 payload: actividad.data[0]
             })
         }catch(error){
-            console.log(error);
+            throw new Error(JSON.stringify(error.response.data))
         }
     }
 
@@ -54,12 +54,23 @@ const ActividadState = (props) => {
                 payload: clases.data
             })    
         }catch(error){
-            console.log(error)
+            throw new Error(JSON.stringify(error.response.data))
         }
         
     }
 
-    
+    const agregarClaseCliente = async registro => {
+        try{
+          await clienteAxios.post(`/classes`, registro);
+          dispatch({
+            type: AGREGAR_CLASE_CLIENTE,
+            payload: registro.claseId
+          })
+        }catch(error){
+            throw new Error(JSON.stringify(error.response.data))
+        }
+      
+    }
     return (
         <actividadesContext.Provider
             value={{
@@ -68,7 +79,8 @@ const ActividadState = (props) => {
                 clasesActividad: state.clasesActividad,
                 obtenerActividades,
                 obtenerActividadActual,
-                obtenerClasesActividad
+                obtenerClasesActividad,
+                agregarClaseCliente
             }}
         >
             {props.children}

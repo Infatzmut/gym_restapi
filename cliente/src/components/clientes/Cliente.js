@@ -6,23 +6,17 @@ import ClienteDetalle from './ClienteDetalle'
 import NuevoCliente from './NuevoCliente';
 const Cliente = ({cliente}) => {
     
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: false
-    })
-
     const clientesContext = useContext(clienteContext);
-    const { clienteActual,getCliente,eliminarCliente,obtenerClasesCliente, limpiarClasesCliente, limpiarCliente} = clientesContext;
+    const { clienteActual,getCliente,eliminarCliente,obtenerClasesCliente,error, limpiarClasesCliente, limpiarCliente} = clientesContext;
 
 
     const [inspeccionar, mostrarInspeccionar] = useState(false);
     const [editar, mostrarEditar] = useState(false);
     
     const handleInspec = (state) => {
-        obtenerClasesCliente(cliente.id_cliente)
+        if(state){
+            obtenerClasesCliente(cliente.id_cliente)
+        }
         mostrarInspeccionar(state)
     }
     
@@ -38,8 +32,8 @@ const Cliente = ({cliente}) => {
 
     const handleDelete = () => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: '¿Estas Seguro?',
+            text: "El cliente seleccionado podria tener clases registradas",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -47,15 +41,26 @@ const Cliente = ({cliente}) => {
             confirmButtonText: 'Yes, delete it!'
           }).then((result) => {
             if (result.value) {
-                eliminarCliente(cliente.id_cliente);
-                handleInspec(false)
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
+                eliminarCliente(cliente.id_cliente)
+                    .then(_ => {
+                        handleInspec(false)
+                        Swal.fire(
+                        'Deleted!',
+                        'Cliente Eliminado.',
+                        'success'
+                    )
+                    })
+                    .catch(error=>{
+                        error = JSON.parse(error.message);
+                        Swal.fire(
+                            `${error.status}`,
+                            `${error.message}`,
+                            `${error.status.toLowerCase()}`
+                        ) ;
+                    }
                 )
             }
-          })
+        })
     }
 
     const handleOpenInfo = () => {
@@ -87,7 +92,7 @@ const Cliente = ({cliente}) => {
             <td>{cliente.membresia}</td>
             <td>{cliente.direccion}</td>
             <td>
-                <button className="btn btn-info" onClick={handleOpenInfo} ><i className="fa fa-pencil"></i></button>
+                <button className="btn btn-info" onClick={handleOpenInfo} ><i className="fa fa-info"></i></button>
                 <button className="btn btn-danger" onClick={()=> handleDelete()}><i className="fa fa-ban"></i></button>
             </td>
         </tr>
@@ -102,10 +107,10 @@ const Cliente = ({cliente}) => {
                         <ClienteDetalle cliente={clienteActual}/>
                     </Modal.Body>
                     <Modal.Footer>
-                    <button onClick={() => {
+                    <button className="btn btn-primary" onClick={() => {
                         handleOpenEdit()
                     }}>Editar</button>
-                    <button onClick={()=>handleDelete()}>Eliminar</button>
+                    <button className="btn btn-danger" onClick={()=>handleDelete()}>Eliminar</button>
                     </Modal.Footer>
                 </Fragment>) : 
                 <p>is Loading</p> }       

@@ -85,6 +85,13 @@ module.exports = function setupCustomerServices(dbInstance){
         if(customer.length == 0) {
             baseService.getServiceResponse(ERROR_STATUS, NOT_FOUND, "No existent customer", {});
         } else {
+            const capacidades = await dbInstance.query(`select da.id_detalle_actividad, da.capacidad  
+                                    from detalle_actividad da 
+                                    inner join actividad_cliente ac on ac.id_detalle_act = da.id_detalle_actividad
+                                    where ac.id_cliente = ?`, [id])
+            capacidades.map(async clase => {
+                const newCapacity = clase.capacidad+1;
+                await dbInstance.query("update detalle_actividad set capacidad = ? where id_detalle_actividad = ?", [newCapacity, clase.id_detalle_actividad])})
             await dbInstance.query('update clientes set estado = 0 where id_cliente = ?', [id]);
             baseService.getServiceResponse(SUCCESS_STATUS, SUCCESS_NO_CONTENT, "Customer deleted successfully", true);
         }
@@ -95,7 +102,7 @@ module.exports = function setupCustomerServices(dbInstance){
         if(!customerId) {
             baseService.getServiceResponse(ERROR_STATUS, BAD_REQUEST_CODE, "INVALID SEARCH PARAMETER", "NO CUSTOMER ID SENDED");
         } else {
-            const classesPerCustomer = await dbInstance.query(`select  bh.hora_inicio,bh.hora_fin, a.nombre as actividad, da.fechal, c.nombre, c.apellido_paterno 
+            const classesPerCustomer = await dbInstance.query(`select  ac.id_clase,bh.hora_inicio,bh.hora_fin, a.nombre as actividad, da.fechal, c.nombre, c.apellido_paterno 
                                                                 from actividad_cliente ac 
                                                                 inner join detalle_actividad da on ac.id_detalle_act = da.id_detalle_actividad
                                                                 inner join bloque_horario bh on bh.id_bloque_horario = da.id_bloque_horario

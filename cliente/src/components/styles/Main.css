@@ -1,0 +1,43 @@
+.main-landing {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.image-container > img{
+    width: 100%;
+}
+.landing-title {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.landing-title > h1{
+    font-size: 10rem;
+    text-transform: uppercase;
+    margin-bottom: 0px;
+    height: 120px;
+}
+.landing-title >img {
+    width: 100%;
+}
+.fitness {
+    font-weight: 100;
+}
+.workout {
+    color: peru;
+    text-decoration: underline;
+    font-weight: 800;
+}
+
+@media screen and (max-width: 1000px) {
+    .main-landing {
+      flex-direction: column;
+    }
+    .landing-title {
+        width: 100%;
+        align-items: center;
+    }
+  }
